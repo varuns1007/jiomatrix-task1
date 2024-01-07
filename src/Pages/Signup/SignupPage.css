@@ -1,0 +1,19 @@
+.info-icon{
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    font-size: 1.15em;
+    cursor: pointer;
+}
+
+.tooltip{
+    /* display: none; */
+    width: 15em;
+    position: absolute;
+    top: -40%;
+    right: -89%;
+    font-size: 1.15em;
+    padding: 0.8em;
+  border-radius: 6px;
+    background-color: #107895;
+}

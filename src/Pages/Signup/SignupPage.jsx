@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
+import { v4 as uuidv4 } from "uuid";
 
 import "./SignupPage.css";
 import Input from "../../Components/Input/Input";
 
-const SignupPage = () => {
+const SignupPage = ({ idb, userData }) => {
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   let passwordRegex =
     /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
@@ -56,8 +57,37 @@ const SignupPage = () => {
     // console.log(disable);
   };
 
-  const submitForm = () => {
-    // console.log(disable);
+  const submitForm = (e) => {
+    console.log("userData", userData);
+    e.stopPropagation();
+    const request = idb.open("test-db", 1);
+
+    request.onerror = function (event) {
+      console.error("An error occurred with IndexedDB");
+      console.error(event);
+    };
+    request.onsuccess = function () {
+      console.log("Database opened successfully");
+
+      const db = request.result;
+
+      var tx = db.transaction("userData", "readwrite");
+      var userData = tx.objectStore("userData");
+
+      const v4Id = uuidv4();
+      console.log("v4id", v4Id);
+      const item = {
+        id: v4Id,
+        email: email,
+        password: password,
+      };
+      const user = userData.put(item);
+
+      tx.oncomplete = function () {
+        console.log("User added successfully");
+        db.close();
+      };
+    };
   };
 
   return (

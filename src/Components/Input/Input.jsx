@@ -56,7 +56,7 @@ const Input = ({
             name={name}
             id={id}
             placeholder={placeholder}
-            onInput={(e) => changeData(e)}
+            onChange={(e) => changeData(e)}
           />
         </div>
       )}

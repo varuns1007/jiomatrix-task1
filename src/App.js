@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { CookiesProvider } from 'react-cookie';
+
 import LoginPage from "./Pages/Login/LoginPage";
 import SignupPage from "./Pages/Signup/SignupPage";
 
@@ -84,7 +86,9 @@ function App() {
 
   return (
     <div>
+      <CookiesProvider defaultSetOptions={{ path: '/' }}> 
       <RouterProvider router={router} />
+      </CookiesProvider >
     </div>
   );
 }

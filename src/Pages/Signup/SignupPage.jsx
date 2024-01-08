@@ -57,9 +57,9 @@ const SignupPage = ({ idb, userData }) => {
     // console.log(disable);
   };
 
-  const submitForm = (e) => {
-    console.log("userData", userData);
-    e.stopPropagation();
+  const submitForm = () => {
+    // console.log("userData", userData);
+
     const request = idb.open("test-db", 1);
 
     request.onerror = function (event) {

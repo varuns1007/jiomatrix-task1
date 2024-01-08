@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import "./LoginPage.css";
 import Input from "../../Components/Input/Input";
 
-const LoginPage = () => {
+const LoginPage = ({ idb, userData }) => {
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   let passwordRegex =
     /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
@@ -43,12 +43,49 @@ const LoginPage = () => {
     setSubmitError(value);
   };
 
+  const handleLogin = () => {
+    const request = idb.open("test-db", 1);
+
+    request.onerror = function (event) {
+      console.error("An error occurred with IndexedDB");
+      console.error(event);
+    };
+    request.onsuccess = function () {
+      console.log("Database opened successfully");
+
+      const db = request.result;
+
+      var tx = db.transaction("userData", "readonly");
+      var userData = tx.objectStore("userData");
+
+      const user = userData.get(email);
+      user.onsuccess = (query) => {
+        const user1 = query.srcElement.result;
+        console.log("User found", user1);
+        if (user1.password === password) {
+          console.log("password matched, log in user");
+          //set cookie
+        } else {
+          console.log("password different, log in user");
+        }
+      };
+      user.onerror = (query) => {
+        console.log("User not found");
+      };
+
+      tx.oncomplete = function () {
+        console.log("User found");
+        db.close();
+      };
+    };
+  };
+
   return (
     <div>
       <section className="box">
         <header>Login</header>
         <div className="form-body">
-          <form action="" method="post">
+          <form action="" method="post" onSubmit={handleLogin}>
             <Input
               type="text"
               name="email"

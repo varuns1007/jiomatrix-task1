@@ -1,22 +1,25 @@
 import React from "react";
-// import { MdAlternateEmail } from "react-icons/md";
+import { MdAlternateEmail, MdLock } from "react-icons/md";
 
 import "./Input.css";
 
-// const getIconFromName = (iconName) => {
-//   switch (iconName) {
-//     case "MdAlternateEmail":
-//       return <MdAlternateEmail />;
-//     default:
-//     // all other supported icons
-//   }
-// }
+const getIconFromName = (iconName) => {
+  switch (iconName) {
+    case "MdAlternateEmail":
+      return <MdAlternateEmail />;
+    case "MdLock":
+      return <MdLock />;
+    default:
+    // all other supported icons
+  }
+};
 
 const Input = ({
   type,
   name,
   id,
   value,
+  icon,
   placeholder,
   error,
   errorMessage,
@@ -24,9 +27,11 @@ const Input = ({
   disabled,
 }) => {
   return (
-    <div className="position:relative">
+    <div style={{ position: "relative" }}>
+      <span className="icon">{getIconFromName(icon)}</span>
+
       {type === "submit" ? (
-        <div>
+        <div className="position:relative">
           {" "}
           {disabled ? (
             <input
@@ -44,24 +49,22 @@ const Input = ({
           )}
         </div>
       ) : (
-        <input
-          className="input-body"
-          type={type}
-          name={name}
-          id={id}
-          placeholder={placeholder}
-          onInput={(e) => changeData(e)}
-        />
+        <div className="position:relative">
+          <input
+            className="input-body"
+            type={type}
+            name={name}
+            id={id}
+            placeholder={placeholder}
+            onInput={(e) => changeData(e)}
+          />
+        </div>
       )}
       {error ? (
         <span>
           <p className="errorMessage">{errorMessage}</p>
         </span>
-      ) : (
-        <div></div>
-      )}
-
-      {/* <span className="icon">{getIconFromName(icon)}</span> */}
+      ) : null}
     </div>
   );
 };

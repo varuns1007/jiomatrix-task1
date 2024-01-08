@@ -53,15 +53,12 @@ const SignupPage = () => {
     } else {
       setDisable(true);
     }
-    console.log(disable);
-
+    // console.log(disable);
   };
 
   const submitForm = () => {
     // console.log(disable);
-    
-
-  }
+  };
 
   return (
     <div>
@@ -92,6 +89,7 @@ const SignupPage = () => {
               errorMessage="Kindly enter appropriate email!"
               data={email}
               changeData={changeEmail}
+              icon="MdAlternateEmail"
             />
             <Input
               type="text"
@@ -102,8 +100,23 @@ const SignupPage = () => {
               errorMessage="Kindly follow the password policy!"
               data={password}
               changeData={changePassword}
+              icon="MdLock"
             />
-            <Input type="submit" icon="MdAlternateEmail" disabled={disable} />
+            <Input type="submit" disabled={disable} />
+            <p style={{ marginLeft: "1.5em" }}>
+              Already have a account?{" "}
+              <a
+                href="/login"
+                style={{
+                  outline: "none",
+                  textDecoration: "none",
+                  color: "#107895",
+                  fontWeight: "600",
+                }}
+              >
+                Login
+              </a>
+            </p>
           </form>
         </div>
       </section>

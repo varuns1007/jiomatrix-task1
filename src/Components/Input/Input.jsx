@@ -1,5 +1,5 @@
 import React from "react";
-import { MdAlternateEmail, MdLock } from "react-icons/md";
+import { MdAlternateEmail, MdLock, MdOutlineSearch } from "react-icons/md";
 
 import "./Input.css";
 
@@ -9,6 +9,8 @@ const getIconFromName = (iconName) => {
       return <MdAlternateEmail />;
     case "MdLock":
       return <MdLock />;
+    case "MdOutlineSearch":
+      return <MdOutlineSearch />;
     default:
     // all other supported icons
   }

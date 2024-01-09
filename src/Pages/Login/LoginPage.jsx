@@ -1,9 +1,22 @@
 import React, { useState } from "react";
+import { useCookies } from "react-cookie";
 
 import "./LoginPage.css";
 import Input from "../../Components/Input/Input";
 
+function addHours(date, hours) {
+  date.setHours(date.getHours() + hours);
+
+  return date;
+}
+
 const LoginPage = ({ idb, userData }) => {
+  const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);
+  // const loggedInUser = cookies.loggedInUser;
+  // if (loggedInUser) {
+  //   window.location.replace("/landingPage");
+  // }
+
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   let passwordRegex =
     /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
@@ -43,7 +56,7 @@ const LoginPage = ({ idb, userData }) => {
     setSubmitError(value);
   };
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
     const request = idb.open("test-db", 1);
 
     request.onerror = function (event) {
@@ -65,8 +78,15 @@ const LoginPage = ({ idb, userData }) => {
         if (user1.password === password) {
           console.log("password matched, log in user");
           //set cookie
+          const date = new Date();
+
+          const newDate = addHours(date, 2);
+          setCookie("loggedInUser", user1, {
+            expires: newDate,
+          });
+          // window.location.replace("/landingPage");
         } else {
-          console.log("password different, log in user");
+          alert("password different, log in user");
         }
       };
       user.onerror = (query) => {
@@ -74,10 +94,11 @@ const LoginPage = ({ idb, userData }) => {
       };
 
       tx.oncomplete = function () {
-        console.log("User found");
+        // console.log("User found");
         db.close();
       };
     };
+    e.preventDefault();
   };
 
   return (
@@ -85,7 +106,7 @@ const LoginPage = ({ idb, userData }) => {
       <section className="box">
         <header>Login</header>
         <div className="form-body">
-          <form action="" method="post" onSubmit={handleLogin}>
+          <form onSubmit={handleLogin}>
             <Input
               type="text"
               name="email"

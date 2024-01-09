@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { CookiesProvider } from 'react-cookie';
+import { CookiesProvider, useCookies } from "react-cookie";
 
 import LoginPage from "./Pages/Login/LoginPage";
 import SignupPage from "./Pages/Signup/SignupPage";
+import LandingPage from "./Pages/LandingPage/LandingPage";
+import Routes from "./Routes";
 
 const idb =
   window.indexedDB ||
@@ -44,6 +46,8 @@ const checkIndexedDb = () => {
 
 function App() {
   const [allUsers, setAllUsers] = useState([]);
+  const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);
+  const loggedInUser = cookies.loggedInUser;
 
   useEffect(() => {
     checkIndexedDb();
@@ -69,26 +73,28 @@ function App() {
     };
   };
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <div>Hello world!</div>,
-    },
-    {
-      path: "/login",
-      element: <LoginPage userData={allUsers} idb={idb} />,
-    },
-    {
-      path: "/signup",
-      element: <SignupPage userData={allUsers} idb={idb} />,
-    },
-  ]);
+  // const router = createBrowserRouter([
+  //   {
+  //     path: "/",
+  //     element: <LandingPage idb={idb} />,
+  //   },
+  //   {
+  //     path: "/login",
+  //     element: <LoginPage userData={allUsers} idb={idb} />,
+  //   },
+  //   {
+  //     path: "/signup",
+  //     element: <SignupPage userData={allUsers} idb={idb} />,
+  //   },
+  // ]);
+
+  const router = createBrowserRouter(Routes(loggedInUser, idb, allUsers));
 
   return (
     <div>
-      <CookiesProvider defaultSetOptions={{ path: '/' }}> 
-      <RouterProvider router={router} />
-      </CookiesProvider >
+      <CookiesProvider defaultSetOptions={{ path: "/" }}>
+        <RouterProvider router={router} />
+      </CookiesProvider>
     </div>
   );
 }

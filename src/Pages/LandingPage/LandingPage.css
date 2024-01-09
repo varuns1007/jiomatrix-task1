@@ -1,0 +1,48 @@
+* {
+  font-family: "Poppins", sans-serif;
+}
+.header {
+  display: flex;
+  justify-content: space-evenly;
+  background-color: #107895;
+}
+.title {
+  font-size: 1.5em;
+  font-weight: 600;
+  padding: 0.5em;
+  margin: 0;
+  display: inline;
+}
+
+.searchBar {
+  display: flex;
+}
+.todoButtons {
+  display: inline;
+  padding: 0.8em 0;
+}
+.addTodoButton {
+  padding: 0.8em;
+  border: none;
+  border-radius: 20px;
+  margin: 0 0.3em;
+  background-color: #000080;
+  box-shadow: 0 4px 8px 0 rgba(21, 21, 21, 0.2);
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.9em;
+  color: #c4c3ca;
+  font-weight: 500;
+}
+
+.searchTodoButton {
+  background-color: #04aa6d;
+}
+
+.logoutButton {
+  background-color: #8b0000;
+}
+
+.todoContainer {
+  display: flex;
+}

@@ -1,11 +1,20 @@
 import React, { useState } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import { v4 as uuidv4 } from "uuid";
+import { useCookies } from "react-cookie";
 
 import "./SignupPage.css";
 import Input from "../../Components/Input/Input";
 
+function addHours(date, hours) {
+  date.setHours(date.getHours() + hours);
+
+  return date;
+}
+
 const SignupPage = ({ idb, userData }) => {
+  const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);
+
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   let passwordRegex =
     /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
@@ -80,8 +89,22 @@ const SignupPage = ({ idb, userData }) => {
         id: v4Id,
         email: email,
         password: password,
+        todos: [],
       };
       const user = userData.put(item);
+      user.onsuccess = (query) => {
+        const user1 = query.srcElement.result;
+        //set cookie
+        const date = new Date();
+
+        const newDate = addHours(date, 2);
+        setCookie("loggedInUser", user1, {
+          expires: newDate,
+        });
+      };
+      user.onerror = (query) => {
+        console.log("User Adding failed");
+      };
 
       tx.oncomplete = function () {
         console.log("User added successfully");

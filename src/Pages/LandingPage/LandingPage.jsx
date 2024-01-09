@@ -43,16 +43,18 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-      <section className="todoContainer">
-        {[{ a: 1 }, { b: 1 }, { c: 1 }, { d: 1 }, { e: 1 }, { f: 1 }].map(
-          (todo, key) => (
-            <Card key={key} data={todo} />
-          ),
-        )}
-        {/* {cookies.loggedInUser.todos.map((item) => (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <section className="todoContainer">
+          {[{ a: 1 }, { b: 1 }, { c: 1 }, { d: 1 }, { e: 1 }, { f: 1 }].map(
+            (todo, key) => (
+              <Card key={key} data={todo} />
+            ),
+          )}
+          {/* {cookies.loggedInUser.todos.map((item) => (
           <Card />
         ))} */}
-      </section>
+        </section>
+      </div>
     </div>
   );
 };

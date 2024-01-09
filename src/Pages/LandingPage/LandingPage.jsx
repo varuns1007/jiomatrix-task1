@@ -7,23 +7,12 @@ import Card from "../../Components/Card/Card";
 import "./LandingPage.css";
 
 const LandingPage = () => {
-  const [cookies, setCookie, removeCookie] = useCookies(["logedInUser"]);
-  // const [loggedInUser, setLoggedInUser] = useState({
-  //   todos: [],
-  // });
-  // const loggedInUser = cookies.loggedInUser;
-  // const [temp, setTemp] = useState([{ a: 1 }, { b: 1 }, { c: 1 }]);
+  const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);
 
   const [search, setSearch] = useState("");
   const changeSearch = (e) => {
     setSearch(e.target.value);
   };
-  // console.log(loggedInUser);
-
-  useEffect(() => {
-    // const User = cookies.loggedInUser;
-    // setLoggedInUser(User);
-  }, []);
 
   return (
     <div>
@@ -55,12 +44,14 @@ const LandingPage = () => {
         </div>
       </section>
       <section className="todoContainer">
+        {[{ a: 1 }, { b: 1 }, { c: 1 }, { d: 1 }, { e: 1 }, { f: 1 }].map(
+          (todo, key) => (
+            <Card key={key} data={todo} />
+          ),
+        )}
         {/* {cookies.loggedInUser.todos.map((item) => (
           <Card />
         ))} */}
-        {/* {loggedInUser.todos.forEach((todo) => {
-          return <Card />;
-        })} */}
       </section>
     </div>
   );

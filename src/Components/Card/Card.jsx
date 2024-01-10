@@ -18,7 +18,7 @@ const Card = ({ data, idb }) => {
   const [todoComplete, setTodoComplete] = useState(data.completed);
   const changeTodoComplete = () => {
     setTodoComplete(!todoComplete);
-    handleTodoComplete();
+    // handleTodoComplete();
   };
 
   const handleTodoComplete = () => {
@@ -37,14 +37,16 @@ const Card = ({ data, idb }) => {
       var userData = tx.objectStore("userData");
 
       const currentUser = cookies.loggedInUser;
+
+      // console.log("before", currentUser.todos[0]);
       currentUser.todos.forEach((todo) => {
+        // console.log(todo.id === data.id);
         if (todo.id === data.id) {
-          console.log("here", todo);
-          console.log("here", data);
           todo.completed = !todo.completed;
           return;
         }
       });
+      // console.log("after", currentUser.todos[0]);
 
       const user = userData.put(currentUser);
       user.onsuccess = (query) => {
@@ -84,7 +86,7 @@ const Card = ({ data, idb }) => {
                 type="checkbox"
                 name="todoStatus"
                 checked={todoComplete}
-                onClick={changeTodoComplete}
+                onClick={handleTodoComplete}
                 onChange={changeTodoComplete}
               />
               <span className="slider round"></span>

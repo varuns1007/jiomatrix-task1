@@ -75,18 +75,22 @@ const LoginPage = ({ idb, userData }) => {
       user.onsuccess = (query) => {
         const user1 = query.srcElement.result;
         console.log("User found", user1);
-        if (user1.password === password) {
-          console.log("password matched, log in user");
-          //set cookie
-          const date = new Date();
-
-          const newDate = addHours(date, 2);
-          setCookie("loggedInUser", user1, {
-            expires: newDate,
-          });
-          // window.location.replace("/landingPage");
+        if (!user1) {
+          alert("No such user");
         } else {
-          alert("password different, log in user");
+          if (user1.password === password) {
+            console.log("password matched, log in user");
+            //set cookie
+            const date = new Date();
+
+            const newDate = addHours(date, 2);
+            setCookie("loggedInUser", user1, {
+              expires: newDate,
+            });
+            // window.location.replace("/landingPage");
+          } else {
+            alert("password different, log in user");
+          }
         }
       };
       user.onerror = (query) => {

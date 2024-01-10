@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import { IoIosCloseCircle } from "react-icons/io";
+import { v4 as uuidv4 } from "uuid";
 
 import Input from "../../Components/Input/Input";
 import Card from "../../Components/Card/Card";
@@ -17,8 +18,6 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "fit-content",
-  // bgcolor: "background.paper",
-  // border: "2px s olid #000",
   boxShadow: 24,
   backgroundColor: "#2a2b38",
   backgroundImage:
@@ -27,11 +26,18 @@ const style = {
   backgroundRepeat: "no-repeat",
   backgroundSize: "300%",
   borderRadius: "6px",
-  // p: 4,
 };
 
-const LandingPage = () => {
-  const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);
+function addHours(date, hours) {
+  date.setHours(date.getHours() + hours);
+
+  return date;
+}
+
+const LandingPage = ({ idb }) => {
+  const [cookies, setCookie, removeCookie, updateCookies] = useCookies([
+    "loggedInUser",
+  ]);
 
   const [search, setSearch] = useState("");
   const changeSearch = (e) => {
@@ -44,11 +50,12 @@ const LandingPage = () => {
   };
 
   useEffect(() => {
-    fetch("https://dummyjson.com/todos")
-      .then((res) => res.json())
-      .then((res) => {
-        changeTodos(res.todos);
-      });
+    // fetch("https://dummyjson.com/todos")
+    //   .then((res) => res.json())
+    //   .then((res) => {
+    //     changeTodos(res.todos);
+    //   });
+    changeTodos(cookies.loggedInUser.todos);
   }, []);
 
   const [open, setOpen] = React.useState(false);
@@ -78,9 +85,59 @@ const LandingPage = () => {
   const changeDateTimeError = (value) => setDateTimeError(value);
 
   const handleAddTodo = (e) => {
-    console.log(title);
-    console.log(description);
-    console.log(dateTime);
+    const request = idb.open("test-db", 1);
+
+    request.onerror = function (event) {
+      console.error("An error occurred with IndexedDB");
+      console.error(event);
+    };
+    request.onsuccess = function () {
+      console.log("Database opened successfully");
+
+      const db = request.result;
+
+      var tx = db.transaction("userData", "readwrite");
+      var userData = tx.objectStore("userData");
+
+      //add todo
+      const v4Id = uuidv4();
+      const todo = {
+        id: v4Id,
+        title,
+        description,
+        dateTime,
+        completed: false,
+      };
+      const updatedUser = cookies.loggedInUser;
+      updatedUser.todos.push(todo);
+
+      // console.log("updatedUser", updatedUser);
+      // console.log(cookies.loggedInUser.email);
+
+      // const user = userData.put(cookies.loggedInUser.email);
+      const user = userData.put(updatedUser);
+      user.onsuccess = (query) => {
+        console.log("Todo added");
+        const date = new Date();
+
+        const newDate = addHours(date, 1);
+        // console.log("before: ", cookies.loggedInUser);
+        setCookie("loggedInUser", updatedUser, {
+          expires: newDate,
+        });
+        // console.log("after: ", cookies.loggedInUser);
+      };
+      user.onerror = (query) => {
+        console.log("Todo adding failed");
+      };
+
+      tx.oncomplete = function () {
+        // console.log("User found");
+        handleClose();
+        db.close();
+      };
+    };
+
     e.preventDefault();
   };
 
@@ -183,9 +240,9 @@ const LandingPage = () => {
       </section>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <section className="todoContainer">
-          {todos.map((todo, key) => (
-            <Card key={key} data={todo} />
-          ))}
+          {todos.length > 0
+            ? todos.map((todo, key) => <Card key={key} data={todo} idb={idb} />)
+            : null}
           {/* {cookies.loggedInUser.todos.map((item) => (
           <Card />
         ))} */}

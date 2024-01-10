@@ -1,5 +1,12 @@
 import React from "react";
-import { MdAlternateEmail, MdLock, MdOutlineSearch } from "react-icons/md";
+import {
+  MdAlternateEmail,
+  MdLock,
+  MdOutlineSearch,
+  MdFormatQuote,
+  MdLockClock,
+  MdTextFormat,
+} from "react-icons/md";
 
 import "./Input.css";
 
@@ -11,6 +18,12 @@ const getIconFromName = (iconName) => {
       return <MdLock />;
     case "MdOutlineSearch":
       return <MdOutlineSearch />;
+    case "MdFormatQuote":
+      return <MdFormatQuote />;
+    case "MdLockClock":
+      return <MdLockClock />;
+    case "MdTextFormat":
+      return <MdTextFormat />;
     default:
     // all other supported icons
   }
@@ -50,6 +63,16 @@ const Input = ({
             />
           )}
         </div>
+      ) : type === "textarea" ? (
+        <textarea
+          className="input-body"
+          name=""
+          id=""
+          cols="30"
+          rows="10"
+          placeholder="What's on your mind today?...."
+          onChange={(e) => changeData(e)}
+        ></textarea>
       ) : (
         <div className="position:relative">
           <input

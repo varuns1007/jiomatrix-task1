@@ -4,8 +4,7 @@ import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { IoIosCloseCircle } from "react-icons/io";
 
 import Input from "../../Components/Input/Input";
 import Card from "../../Components/Card/Card";
@@ -18,10 +17,17 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "fit-content",
-  bgcolor: "background.paper",
+  // bgcolor: "background.paper",
   // border: "2px s olid #000",
   boxShadow: 24,
-  p: 4,
+  backgroundColor: "#2a2b38",
+  backgroundImage:
+    "url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/1462889/pat.svg')",
+  backgroundPosition: "bottom center",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "300%",
+  borderRadius: "6px",
+  // p: 4,
 };
 
 const LandingPage = () => {
@@ -49,6 +55,35 @@ const LandingPage = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dateTime, setDateTime] = useState("");
+
+  const changeTitle = (e) => {
+    setTitle(e.target.value);
+  };
+  const changeDescription = (e) => {
+    setDescription(e.target.value);
+  };
+  const changeDateTime = (e) => {
+    setDateTime(e.target.value);
+  };
+
+  const [titleError, setTitleError] = useState(false);
+  const [descriptionError, setDescriptionError] = useState(false);
+  const [dateTimeError, setDateTimeError] = useState(false);
+
+  const changeTitleError = (value) => setTitleError(value);
+  const changeDescriptionError = (value) => setDescriptionError(value);
+  const changeDateTimeError = (value) => setDateTimeError(value);
+
+  const handleAddTodo = (e) => {
+    console.log(title);
+    console.log(description);
+    console.log(dateTime);
+    e.preventDefault();
+  };
+
   return (
     <div>
       {/* Add todo Modal  */}
@@ -67,12 +102,53 @@ const LandingPage = () => {
       >
         <Fade in={open}>
           <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Text in a modal
-            </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
+            <div className="modal">
+              <section className="modalHeader">
+                <p id="modal-title">Add Todo</p>
+                <span id="cross-button" onClick={handleClose}>
+                  {" "}
+                  <IoIosCloseCircle />{" "}
+                </span>
+              </section>
+              <section className="modalBody">
+                <form onSubmit={handleAddTodo}>
+                  <Input
+                    type="text"
+                    name="title"
+                    id="title"
+                    placeholder="Title"
+                    error={titleError}
+                    errorMessage="Kindly enter title!"
+                    data={title}
+                    changeData={changeTitle}
+                    icon="MdFormatQuote"
+                  />
+                  <Input
+                    type="textarea"
+                    name="description"
+                    id="description"
+                    placeholder="Description"
+                    error={descriptionError}
+                    errorMessage="Kindly enter description!"
+                    data={description}
+                    changeData={changeDescription}
+                    icon="MdTextFormat"
+                  />
+                  <Input
+                    type="datetime-local"
+                    name="dateTime"
+                    id="dateTime"
+                    placeholder="Date and Time"
+                    error={dateTimeError}
+                    errorMessage="Kindly enter the Date and time!"
+                    data={dateTime}
+                    changeData={changeDateTime}
+                    icon="MdLockClock"
+                  />
+                  <Input type="submit" />
+                </form>
+              </section>
+            </div>
           </Box>
         </Fade>
       </Modal>

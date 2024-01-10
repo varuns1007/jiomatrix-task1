@@ -48,3 +48,28 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
+#modal-title {
+  margin: 0;
+  font-size: 1.5em;
+  color: #c4c3ca;
+  font-weight: 600;
+  margin-left: 0.5em;
+}
+
+#cross-button {
+  color: grey;
+  font-size: 1.8em;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 24px;
+  top: 16px;
+  cursor: pointer;
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+}

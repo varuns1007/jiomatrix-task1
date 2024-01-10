@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import Input from "../../Components/Input/Input";
 import Card from "../../Components/Card/Card";
 
-import "./LandingPage.css";
+import "./SearchResultsPage.css";
 
 const style = {
   position: "absolute",
@@ -34,10 +34,15 @@ function addHours(date, hours) {
   return date;
 }
 
-const LandingPage = ({ idb }) => {
+const SearchResultsPage = ({ idb }) => {
   const [cookies, setCookie, removeCookie, updateCookies] = useCookies([
     "loggedInUser",
   ]);
+
+  const [search, setSearch] = useState("");
+  const changeSearch = (e) => {
+    setSearch(e.target.value);
+  };
 
   const [todos, setTodos] = useState([]);
   const changeTodos = (data) => {
@@ -134,24 +139,6 @@ const LandingPage = ({ idb }) => {
     };
 
     e.preventDefault();
-  };
-
-  const [search, setSearch] = useState("");
-  const changeSearch = (e) => {
-    setSearch(e.target.value);
-    handleSearch();
-  };
-  const handleSearch = () => {
-    if (search !== "") {
-      const currentUserTodos = cookies.loggedInUser.todos;
-      currentUserTodos.filter((todo) => {
-        return todo.title.search(search) || todo.description.search(search);
-      });
-      console.log("search results", currentUserTodos);
-      changeTodos(currentUserTodos);
-    } else if (search === "") {
-      changeTodos(cookies.loggedInUser.todos);
-    }
   };
 
   return (
@@ -265,4 +252,4 @@ const LandingPage = ({ idb }) => {
   );
 };
 
-export default LandingPage;
+export default SearchResultsPage;

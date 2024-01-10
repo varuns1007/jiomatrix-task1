@@ -1,24 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import "./Card.css";
 
 const Card = ({ data }) => {
+  const [todoComplete, setTodoComplete] = useState(data.completed);
+  const changeTodoComplete = () => {
+    setTodoComplete(!todoComplete);
+  };
+
   return (
     <div>
-      <div class="wrapper">
-        <div class="product-info">
-          <div class="product-text">
+      <div className="wrapper">
+        <div className="product-info">
+          <div className="product-text">
             <h1>Title 1</h1>
             <h2>Tue Jan 09 2024 - 3:10:30 PM</h2>
-            <label class="switch">
-              <input type="checkbox" name="todoStatus" id="todoStatus" />
-              <span class="slider round"></span>
+            <label className="switch">
+              <input
+                type="checkbox"
+                name="todoStatus"
+                checked={todoComplete}
+                onClick={changeTodoComplete}
+                onChange={changeTodoComplete}
+              />
+              <span className="slider round"></span>
             </label>
-            <p>
-              Harvest Vases are a reinterpretation of peeled fruits and
-              vegetables as functional objects. The surfaces appear to be sliced
-              and pulled aside, allowing room for growth.{" "}
-            </p>
+            <p>{data.todo}. </p>
           </div>
         </div>
       </div>

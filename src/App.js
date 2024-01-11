@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { CookiesProvider, useCookies } from "react-cookie";
 
-import LoginPage from "./Pages/Login/LoginPage";
-import SignupPage from "./Pages/Signup/SignupPage";
-import LandingPage from "./Pages/LandingPage/LandingPage";
 import Routes from "./Routes";
 
 const idb =

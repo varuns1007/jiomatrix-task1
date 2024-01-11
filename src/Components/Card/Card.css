@@ -1,3 +1,8 @@
+*{
+  font-family: 'Poppins',sans-serif !important  ;
+}
+
+
 .todoCard {
   height: 3em;
   margin: 1em;
@@ -9,13 +14,14 @@
   border-radius: 22px;
   position: relative;
   cursor: pointer;
+  
 }
 
 .description {
   text-overflow: ellipsis;
 }
 
-.todoCard : hover {
+.todoCard:hover {
   height: fit-content;
 }
 
@@ -37,11 +43,11 @@
 .switch {
   position: absolute;
   display: inline-block;
-  width: 60px;
-  height: 34px;
+  width: 50px;
+  height: 25px;
   margin-top: 0.5em;
-  right: 5%;
-  top: 8%;
+  right: 25%;
+    top: 10%;
 }
 
 /* Hide default HTML checkbox */
@@ -55,7 +61,7 @@
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0;
+  top: 2px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -67,10 +73,10 @@
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
-  width: 26px;
+  height: 17px;
+  width: 17px;
   left: 4px;
-  bottom: 4px;
+  bottom: 3px;
   background-color: white;
   -webkit-transition: 0.4s;
   transition: 0.4s;
@@ -104,20 +110,27 @@ input:checked + .slider:before {
   padding: 1em;
   width: fit-content;
   margin: 50px auto;
-  border-radius: 7px 7px 7px 7px;
+  /* border-radius: 7px 7px 7px 7px; */
   /* VIA CSS MATIC https://goo.gl/cIbnS */
-  -webkit-box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
-  box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
+  /* -webkit-box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
+  /* -moz-box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
+  /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
 }
 
 .product-info {
   position: relative;
   float: left;
-  /* height: 301px; */
   width: 327px;
-  border-radius: 10px;
-  background-color: #ffffff;
+  border: 4px solid #0274bf;
+  border-radius: 13px;
+  background-color: 	#1c272e;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+.product-info:hover{
+  border: 4px solid #3db2ff;
+
 }
 
 .product-text {
@@ -127,9 +140,9 @@ input:checked + .slider:before {
 
 .product-text h1 {
   margin: 0 0 0 38px;
-  padding-top: 25px;
+  padding-top: 15px;
   font-size: 34px;
-  color: #474747;
+  color: #fff;
 }
 
 .product-text h1,
@@ -157,3 +170,37 @@ input:checked + .slider:before {
   font-weight: lighter;
   overflow: hidden;
 }
+
+.deleteTodo{
+  font-size: 2em;
+  position: absolute;
+  right: 10px;
+  top: 16px;
+  cursor: pointer;
+}
+
+.deleteTodoIcon{
+  color:#ff5448;
+}
+/* .deleteTodoIcon :hover{
+  color: #ff0000;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+} */
+
+.editTodo{
+  font-size: 2em;
+  position: absolute;
+  top: 16px;
+  cursor: pointer;
+  right: 13%;
+}
+
+.editTodoIcon{
+  color: #00b33c;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+/* .editTodoIcon:hover{
+  color: #00e64d;
+} */

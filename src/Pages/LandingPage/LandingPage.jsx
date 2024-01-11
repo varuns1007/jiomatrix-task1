@@ -6,6 +6,7 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import { IoIosCloseCircle } from "react-icons/io";
 import { v4 as uuidv4 } from "uuid";
+import toast, { Toaster } from 'react-hot-toast';
 
 import Input from "../../Components/Input/Input";
 import Card from "../../Components/Card/Card";
@@ -34,14 +35,38 @@ function addHours(date, hours) {
   return date;
 }
 
+function organizeTodos(arr){
+  let temp = arr.sort((a,b)=> new Date(a.dateTime) - new Date(b.dateTime));
+  let indexArr = [];
+  let resultArr = [];
+  // console.log("arr",arr)
+  for(let i=0;i<temp.length;i++){
+    if(!arr[i].completed){
+      resultArr.push(arr[i]);
+    }else{
+      indexArr.push(i);
+    }
+  }
+  for(let i=0;i<indexArr.length;i++){
+    resultArr.push(arr[indexArr[i]]);
+  }
+  console.log(resultArr);
+  return resultArr;
+}
+
+const notify = (msg) => toast(msg);
+
 const LandingPage = ({ idb }) => {
-  const [cookies, setCookie, removeCookie, updateCookies] = useCookies([
+  const [cookies, setCookie] = useCookies([
     "loggedInUser",
   ]);
 
   const [todos, setTodos] = useState([]);
   const changeTodos = (data) => {
-    setTodos(data);
+    // const todoSorted = data.sort((a,b)=> new Date(a.dateTime) - new Date(b.dateTime));
+    // const todoOrganized = organizeTodos(todoSorted);
+    const todoOrganized = organizeTodos(data);
+    setTodos(todoOrganized);
   };
 
   useEffect(() => {
@@ -50,8 +75,15 @@ const LandingPage = ({ idb }) => {
     //   .then((res) => {
     //     changeTodos(res.todos);
     //   });
+    // console.log(document.referrer);
     changeTodos(cookies.loggedInUser.todos);
-  }, []);
+    if(new Date() - new Date(cookies.loggedInUser.loginTime) <= 3000 ){
+      notify("User Signed-In Successfully ✅");
+    }else if(document.referrer === "http://localhost:3000/signup"){
+      notify("User Registered Successfully ✅");
+    }
+
+  }, [cookies.loggedInUser.todos]);
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -63,12 +95,17 @@ const LandingPage = ({ idb }) => {
 
   const changeTitle = (e) => {
     setTitle(e.target.value);
+    e.target.value === "" ? changeTitleError(true) : changeTitleError(false);
   };
   const changeDescription = (e) => {
     setDescription(e.target.value);
+    e.target.value === "" ? changeDescriptionError(true) : changeDescriptionError(false);
+
   };
   const changeDateTime = (e) => {
     setDateTime(e.target.value);
+    e.target.value === "" ? changeDateTimeError(true) : changeDateTimeError(false);
+
   };
 
   const [titleError, setTitleError] = useState(false);
@@ -80,6 +117,8 @@ const LandingPage = ({ idb }) => {
   const changeDateTimeError = (value) => setDateTimeError(value);
 
   const handleAddTodo = (e) => {
+    if(!title || !description || !dateTime) return;
+
     const request = idb.open("test-db", 1);
 
     request.onerror = function (event) {
@@ -120,6 +159,7 @@ const LandingPage = ({ idb }) => {
         setCookie("loggedInUser", updatedUser, {
           expires: newDate,
         });
+        changeTodos(updatedUser.todos);
         // console.log("after: ", cookies.loggedInUser);
       };
       user.onerror = (query) => {
@@ -129,6 +169,7 @@ const LandingPage = ({ idb }) => {
       tx.oncomplete = function () {
         // console.log("User found");
         handleClose();
+        notify("Todo added successfully ✅");
         db.close();
       };
     };
@@ -139,23 +180,24 @@ const LandingPage = ({ idb }) => {
   const [search, setSearch] = useState("");
   const changeSearch = (e) => {
     setSearch(e.target.value);
-    handleSearch();
+    handleSearch(e.target.value);
   };
-  const handleSearch = () => {
-    if (search !== "") {
+  const handleSearch = (value) => {
+    console.log("value",value);
+    if (value !== "") {
       const currentUserTodos = cookies.loggedInUser.todos;
-      currentUserTodos.filter((todo) => {
-        return todo.title.search(search) || todo.description.search(search);
-      });
-      console.log("search results", currentUserTodos);
-      changeTodos(currentUserTodos);
-    } else if (search === "") {
+      const searchQuery = new RegExp(value,"i");
+      const searchResults  = currentUserTodos.filter((todo) => !todo.title.search(searchQuery) || !todo.description.search(searchQuery));
+      changeTodos(searchResults);
+    } else{
       changeTodos(cookies.loggedInUser.todos);
     }
+    // notify("Search Complete ✅");
   };
 
   return (
     <div>
+      <Toaster />
       {/* Add todo Modal  */}
       <Modal
         aria-labelledby="transition-modal-title"
@@ -254,7 +296,7 @@ const LandingPage = ({ idb }) => {
       <div style={{ display: "flex", justifyContent: "center" }}>
         <section className="todoContainer">
           {todos.length > 0
-            ? todos.map((todo, key) => <Card key={key} data={todo} idb={idb} />)
+            ? todos.map((todo, key) => <Card key={key} data={todo} idb={idb} todoStateHandler={changeTodos}/>)
             : null}
           {/* {cookies.loggedInUser.todos.map((item) => (
           <Card />

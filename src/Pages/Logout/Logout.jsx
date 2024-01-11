@@ -1,6 +1,5 @@
 import React from "react";
 import { useCookies } from "react-cookie";
-import { Navigate } from "react-router-dom";
 
 const Logout = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);

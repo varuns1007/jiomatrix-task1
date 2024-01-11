@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
+import toast, { Toaster } from "react-hot-toast";
 
 import "./LoginPage.css";
 import Input from "../../Components/Input/Input";
@@ -10,6 +11,8 @@ function addHours(date, hours) {
   return date;
 }
 
+const notify = (msg) => toast(msg);
+
 const LoginPage = ({ idb, userData }) => {
   const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);
   // const loggedInUser = cookies.loggedInUser;
@@ -17,6 +20,7 @@ const LoginPage = ({ idb, userData }) => {
   //   window.location.replace("/landingPage");
   // }
 
+  // console.log(document.referrer);
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   let passwordRegex =
     /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
@@ -82,8 +86,8 @@ const LoginPage = ({ idb, userData }) => {
             console.log("password matched, log in user");
             //set cookie
             const date = new Date();
-
             const newDate = addHours(date, 2);
+            user1.loginTime = new Date();
             setCookie("loggedInUser", user1, {
               expires: newDate,
             });
@@ -105,8 +109,19 @@ const LoginPage = ({ idb, userData }) => {
     e.preventDefault();
   };
 
+  const checkLogout = ()=>{
+if(document.referrer === "http://localhost:3000/logout"){
+      notify("Logout Successful ✅");
+    }
+  };
+
+  useEffect(() => {
+    checkLogout();
+  }, []);
+
   return (
     <div>
+      <Toaster />
       <section className="box">
         <header>Login</header>
         <div className="form-body">

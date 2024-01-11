@@ -13,8 +13,8 @@ function addHours(date, hours) {
 }
 
 const SignupPage = ({ idb, userData }) => {
-  const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);
-
+  const [cookies, setCookie] = useCookies(["loggedInUser"]);
+  // console.log(cookies);
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   let passwordRegex =
     /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
@@ -66,7 +66,7 @@ const SignupPage = ({ idb, userData }) => {
     // console.log(disable);
   };
 
-  const submitForm = () => {
+  const submitForm = (e) => {
     // console.log("userData", userData);
 
     const request = idb.open("test-db", 1);
@@ -92,17 +92,16 @@ const SignupPage = ({ idb, userData }) => {
         todos: [],
       };
       const user = userData.put(item);
-      user.onsuccess = (query) => {
-        const user1 = query.srcElement.result;
+      user.onsuccess = () => {
         //set cookie
         const date = new Date();
 
         const newDate = addHours(date, 2);
-        setCookie("loggedInUser", user1, {
+        setCookie("loggedInUser", item, {
           expires: newDate,
         });
       };
-      user.onerror = (query) => {
+      user.onerror = () => {
         console.log("User Adding failed");
       };
 

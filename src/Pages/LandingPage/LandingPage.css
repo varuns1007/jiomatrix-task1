@@ -1,10 +1,13 @@
 * {
   font-family: "Poppins", sans-serif;
 }
+
+
 .header {
   display: flex;
   justify-content: space-evenly;
-  background-color: #107895;
+  color: #fff;
+  background-image: linear-gradient(rgba(112.520718,44.062154,249.437846, 1), rgba(112.520718,44.062154,249.437846, 0.95));
 }
 .title {
   font-size: 1.5em;
@@ -31,16 +34,29 @@
   text-align: center;
   cursor: pointer;
   font-size: 0.9em;
-  color: #c4c3ca;
+  color: #fff;
   font-weight: 500;
+  transition: 0.4s;
+}
+
+.addTodoButton:hover{
+  background-color: #0000cc;
 }
 
 .searchTodoButton {
   background-color: #04aa6d;
+  transition: 0.4s;
+}
+.searchTodoButton:hover {
+  background-color: #06c780;
+    /* border: 1px solid #06c780; */
 }
 
 .logoutButton {
   background-color: #8b0000;
+}
+.logoutButton:hover{
+  background-color: #bf0202;
 }
 
 .todoContainer {

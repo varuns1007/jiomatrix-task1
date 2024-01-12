@@ -80,7 +80,7 @@ const LoginPage = ({ idb, userData }) => {
         const user1 = query.srcElement.result;
         console.log("User found", user1);
         if (!user1) {
-          alert("No such user");
+          notify("No such user❗");
         } else {
           if (user1.password === password) {
             console.log("password matched, log in user");
@@ -93,7 +93,7 @@ const LoginPage = ({ idb, userData }) => {
             });
             // window.location.replace("/landingPage");
           } else {
-            alert("password different, log in user");
+            notify("Incorrect Password❗");
           }
         }
       };

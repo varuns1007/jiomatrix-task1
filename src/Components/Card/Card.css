@@ -109,7 +109,7 @@ input:checked + .slider:before {
   height: fit-content;
   padding: 1em;
   width: fit-content;
-  margin: 50px auto;
+  /* margin: 50px auto; */
   /* border-radius: 7px 7px 7px 7px; */
   /* VIA CSS MATIC https://goo.gl/cIbnS */
   /* -webkit-box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */

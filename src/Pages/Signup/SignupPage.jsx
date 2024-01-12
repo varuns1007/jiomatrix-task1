@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import { v4 as uuidv4 } from "uuid";
 import { useCookies } from "react-cookie";
+import toast, { Toaster } from "react-hot-toast";
 
 import "./SignupPage.css";
 import Input from "../../Components/Input/Input";
@@ -11,6 +12,8 @@ function addHours(date, hours) {
 
   return date;
 }
+
+const notify = (msg) => toast(msg);
 
 const SignupPage = ({ idb, userData }) => {
   const [cookies, setCookie] = useCookies(["loggedInUser"]);
@@ -83,37 +86,53 @@ const SignupPage = ({ idb, userData }) => {
       var tx = db.transaction("userData", "readwrite");
       var userData = tx.objectStore("userData");
 
-      const v4Id = uuidv4();
-      console.log("v4id", v4Id);
-      const item = {
-        id: v4Id,
-        email: email,
-        password: password,
-        todos: [],
-      };
-      const user = userData.put(item);
-      user.onsuccess = () => {
-        //set cookie
-        const date = new Date();
+      const user1 = userData.get(email);
+      user1.onsuccess = (query) => {
+        const user1 = query.srcElement.result;
+        if (!user1) {
+          const v4Id = uuidv4();
+          console.log("v4id", v4Id);
+          const item = {
+            id: v4Id,
+            email: email,
+            password: password,
+            todos: [],
+          };
+          const user = userData.put(item);
+          user.onsuccess = () => {
+            //set cookie
+            const date = new Date();
 
-        const newDate = addHours(date, 2);
-        setCookie("loggedInUser", item, {
-          expires: newDate,
-        });
+            const newDate = addHours(date, 2);
+            setCookie("loggedInUser", item, {
+              expires: newDate,
+            });
+          };
+          user.onerror = () => {
+            console.log("User Adding failed");
+          };
+        } else {
+          console.log("User found", user1);
+          notify("User already exists❗");
+        }
       };
-      user.onerror = () => {
-        console.log("User Adding failed");
+      user1.onerror = (query) => {
+        console.log("Error", query);
       };
 
       tx.oncomplete = function () {
-        console.log("User added successfully");
+        // console.log("User added successfully");
         db.close();
       };
     };
+
+    e.preventDefault();
   };
 
   return (
     <div>
+      <Toaster />
+
       <section className="box">
         <header>Signup</header>
         <span

@@ -17,6 +17,11 @@
   display: inline;
 }
 
+.titleIcon{
+  position: relative;
+    top: 3px;
+}
+
 .searchBar {
   display: flex;
 }
@@ -89,3 +94,22 @@
   flex-direction: column;
   padding: 1em;
 }
+
+.sectionTodos{
+  margin: 1em;
+}
+
+.sectionTitleContainer{
+  padding: 1em;
+}
+
+.sectionTitle{
+  font-size: 2em;
+  margin: 0;
+  text-decoration: underline #0274bf;
+}
+
+.emptyTodos{
+  font-size: 1.2em;
+}
+

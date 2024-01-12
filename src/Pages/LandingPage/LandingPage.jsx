@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import { IoIosCloseCircle } from "react-icons/io";
+import { LuListTodo } from "react-icons/lu";
 import { v4 as uuidv4 } from "uuid";
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -65,25 +66,69 @@ const LandingPage = ({ idb }) => {
   const changeTodos = (data) => {
     // const todoSorted = data.sort((a,b)=> new Date(a.dateTime) - new Date(b.dateTime));
     // const todoOrganized = organizeTodos(todoSorted);
-    const todoOrganized = organizeTodos(data);
-    setTodos(todoOrganized);
+    // const todoOrganized = organizeTodos(data);
+    // setTodos(todoOrganized);
+    setTodos(data);
   };
 
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchDate, setSearchDate] = useState("");
+  
+  var timeouts = [];
+  const changeSearchKeyword = (e) => {
+    const searchValue = e.target.value; 
+    setSearchKeyword(searchValue);
+    timeouts.push(setTimeout(function(){
+      console.log("search begins");
+      handleSearch(searchValue,searchDate);
+      for (var i=0; i<timeouts.length; i++) {
+        clearTimeout(timeouts[i]);
+      }
+    }, 1000));
+    
+  };
+
+  const changeSearchDate = (e) => {
+    const searchValue = e.target.value; 
+    setSearchDate(searchValue);
+    timeouts.push(setTimeout(function(){
+      console.log("searchDate begins");
+      handleSearch(searchKeyword,searchValue);
+      for (var i=0; i<timeouts.length; i++) {
+        clearTimeout(timeouts[i]);
+      }
+    }, 1000));
+  };
+
+  // const changeSearchKeyword = (e) => {
+  //   setSearchKeyword(e.target.value);
+  //   handleSearch(e.target.value,searchDate);
+  // };
+
+  // const changeSearchDate = (e) => {
+  //   setSearchDate(e.target.value);
+  //   handleSearch(searchKeyword,e.target.value);
+  // };
+  
   useEffect(() => {
     // fetch("https://dummyjson.com/todos")
     //   .then((res) => res.json())
     //   .then((res) => {
-    //     changeTodos(res.todos);
-    //   });
-    // console.log(document.referrer);
-    changeTodos(cookies.loggedInUser.todos);
-    if(new Date() - new Date(cookies.loggedInUser.loginTime) <= 3000 ){
-      notify("User Signed-In Successfully ✅");
-    }else if(document.referrer === "http://localhost:3000/signup"){
-      notify("User Registered Successfully ✅");
-    }
+      //     changeTodos(res.todos);
+      //   });
+      // console.log(document.referrer);
+      
+      changeTodos(cookies.loggedInUser.todos);
+      if(new Date() - new Date(cookies.loggedInUser.loginTime) <= 3000 ){
+        notify("User Signed-In Successfully ✅");
+      }else if(document.referrer === "http://localhost:3000/signup"){
+        notify("User Registered Successfully ✅");
+      }
+    
 
   }, [cookies.loggedInUser.todos]);
+
+  
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -177,19 +222,29 @@ const LandingPage = ({ idb }) => {
     e.preventDefault();
   };
 
-  const [search, setSearch] = useState("");
-  const changeSearch = (e) => {
-    setSearch(e.target.value);
-    handleSearch(e.target.value);
-  };
-  const handleSearch = (value) => {
-    console.log("value",value);
-    if (value !== "") {
+  
+
+  
+  const handleSearch = (keyword,date) => {
+    console.log("keyword",keyword);
+    console.log("date",date);
+    if (keyword !== "" && date !== "") {
       const currentUserTodos = cookies.loggedInUser.todos;
-      const searchQuery = new RegExp(value,"i");
-      const searchResults  = currentUserTodos.filter((todo) => !todo.title.search(searchQuery) || !todo.description.search(searchQuery));
+      const searchQuery = new RegExp(keyword,"i");
+      const searchResults  = currentUserTodos.filter((todo) => (!(todo.title.search(searchQuery)) 
+      || !(todo.description.search(searchQuery))) && (todo.dateTime.slice(0,10) == date))
       changeTodos(searchResults);
-    } else{
+    }else if(keyword !== ""){
+      const currentUserTodos = cookies.loggedInUser.todos;
+      const searchQuery = new RegExp(keyword,"i");
+      const searchResults  = currentUserTodos.filter((todo) => !(todo.title.search(searchQuery)) 
+      || !(todo.description.search(searchQuery)))
+      changeTodos(searchResults);
+    }else if(date !== ""){
+      const currentUserTodos = cookies.loggedInUser.todos;
+      const searchResults  = currentUserTodos.filter((todo) => (todo.dateTime.slice(0,10) == date))
+      changeTodos(searchResults);
+    }else{
       changeTodos(cookies.loggedInUser.todos);
     }
     // notify("Search Complete ✅");
@@ -266,7 +321,7 @@ const LandingPage = ({ idb }) => {
       </Modal>
       {/* <p>hello {loggedInUser.email}</p> */}
       <section className="header">
-        <p className="title">Todo App</p>
+        <p className="title"> <span className="titleIcon"><LuListTodo /></span> Todo App</p>
         <div className="searchBar">
           <Input
             type="search"
@@ -274,8 +329,10 @@ const LandingPage = ({ idb }) => {
             placeholder="Search"
             name="search"
             id="search"
-            data={search}
-            changeData={changeSearch}
+            searchKeyword={searchKeyword}
+            changeSearchKeyword={changeSearchKeyword}
+            searchDate={searchDate}
+            changeSearchDate={changeSearchDate}
           />
           <div className="todoButtons">
             <button className="searchTodoButton addTodoButton">
@@ -293,16 +350,38 @@ const LandingPage = ({ idb }) => {
           </div>
         </div>
       </section>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+
+        <div className="sectionTodos">
+          <div className="sectionTitleContainer">
+            <p className="sectionTitle underline">
+              Incomplete Todos
+            </p>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
         <section className="todoContainer">
           {todos.length > 0
-            ? todos.map((todo, key) => <Card key={key} data={todo} idb={idb} todoStateHandler={changeTodos}/>)
-            : null}
-          {/* {cookies.loggedInUser.todos.map((item) => (
-          <Card />
-        ))} */}
+            ? todos.map((todo, key) => !todo.completed ? <Card key={key} data={todo} idb={idb} todoStateHandler={changeTodos}/> : null)
+            : <p className="emptyTodos">Sorry, no todos found!</p>}
         </section>
       </div>
+        </div>
+
+        <div className="sectionTodos">
+          <div className="sectionTitleContainer">
+            <p className="sectionTitle underline">
+              Complete Todos
+            </p>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+        <section className="todoContainer">
+          {todos.length > 0
+            ? todos.map((todo, key) => todo.completed ? <Card key={key} data={todo} idb={idb} todoStateHandler={changeTodos}/> : null)
+            : <p className="emptyTodos">Sorry, no todos found!</p>}
+        </section>
+      </div>
+        </div>
+
+      
     </div>
   );
 };

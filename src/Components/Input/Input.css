@@ -12,6 +12,12 @@
   background-color: #1f2029;
 }
 
+.searchDate{
+  width: 9em;
+    padding-left: 1em;
+    font-size: 1.1em;
+}
+
 .icon {
   position: absolute;
   top: 1.5em;

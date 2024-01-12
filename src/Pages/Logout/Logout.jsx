@@ -1,10 +1,14 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { useCookies } from "react-cookie";
 
 const Logout = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);
-  removeCookie("loggedInUser");
-  window.location.href = "/login";
+  
+  useEffect(()=>{
+    removeCookie("loggedInUser");
+    window.location.href = "/login";
+  },[])
+
 
   return (
     <div>

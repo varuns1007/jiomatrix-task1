@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { useCookies } from "react-cookie";
 import { MdDelete,MdEdit  } from "react-icons/md";
 import { IconContext } from "react-icons";
@@ -81,11 +81,6 @@ const Card = ({ data, idb,todoStateHandler }) => {
     // handleTodoComplete();
   };
 
-  // useEffect(()=>{
-  //   setTitle(data.title);
-  //   setDescription(data.description);
-  //   setDateTime(data.dateTime);
-  // },[])
 
   const handleTodoComplete = () => {
     const request = idb.open("test-db", 1);
@@ -169,6 +164,7 @@ const Card = ({ data, idb,todoStateHandler }) => {
           todo.title = title;
           todo.completed = todoComplete;
           todo.description = description;
+          todo.dateTime = dateTime;
           return;
         }
       });
@@ -313,6 +309,8 @@ const Card = ({ data, idb,todoStateHandler }) => {
                     id="dateTime"
                     placeholder="Date and Time"
                     error={dateTimeError}
+                    existingValue={data.dateTime}
+
                     errorMessage="Kindly enter the Date and time!"
                     data={dateTime}
                     changeData={changeDateTime}
@@ -358,21 +356,6 @@ const Card = ({ data, idb,todoStateHandler }) => {
           </div>
         </div>
       </div>
-      {/* <div className="todoCard">
-        <div>
-          <p className="todoTitle">Title 1</p>
-          <p className="description">
-            bdajkbkasjasjkdaskkanakndasndasdksandasns,dnasdadnsmadnamdnasmdnsam,dnasdadnsmadnamdnasmdnsam
-          </p>
-        </div>
-        <span className="todoTime">Tue Jan 09 2024 - 3:10:30 PM</span>
-        <form>
-          <label class="switch">
-            <input type="checkbox" name="todoStatus" id="todoStatus" />
-            <span class="slider round"></span>
-          </label>
-        </form>
-      </div> */}
     </div>
   );
 };

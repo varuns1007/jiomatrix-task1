@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import {
   MdAlternateEmail,
   MdLock,
@@ -33,14 +33,24 @@ const Input = ({
   type,
   name,
   id,
-  value,
+  data,
   icon,
   placeholder,
   error,
   errorMessage,
   changeData,
   disabled,
+  searchKeyword,
+  changeSearchKeyword,
+  searchDate,
+  changeSearchDate
 }) => {
+  
+  useEffect(()=>{
+    const timeoutId = setTimeout(() => console.log(`I can see you're not typing. I can use "${searchKeyword}" now!`), 3000);
+    return () => clearTimeout(timeoutId);
+  },[searchKeyword])
+  
   return (
     <div style={{ position: "relative" }}>
       <span className="icon">{getIconFromName(icon)}</span>
@@ -66,22 +76,37 @@ const Input = ({
       ) : type === "textarea" ? (
         <textarea
           className="input-body"
-          name=""
-          id=""
+          name="description"
+          value={data}
           cols="30"
           rows="10"
           placeholder="What's on your mind today?...."
           onChange={(e) => changeData(e)}
         ></textarea>
+      ) : type === "search" ? (
+        <div className="position:relative">
+          <input
+            className="input-body"
+            type={type}
+            name={name}
+            value={searchKeyword}
+            id={id}
+            placeholder={placeholder}
+            onChange={(e) => {changeSearchKeyword(e)}}
+          />
+          <input type="date" className="searchDate input-body" name={name} id={id} value={searchDate} placeholder={placeholder}
+            onChange={(e) => {changeSearchDate(e)}} />
+        </div>
       ) : (
         <div className="position:relative">
           <input
             className="input-body"
             type={type}
             name={name}
+            value={data}
             id={id}
             placeholder={placeholder}
-            onChange={(e) => changeData(e)}
+            onChange={(e) => {changeData(e)}}
           />
         </div>
       )}

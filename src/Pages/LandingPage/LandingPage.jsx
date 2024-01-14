@@ -5,9 +5,12 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import { IoIosCloseCircle } from "react-icons/io";
+import { MdOutlineClose } from "react-icons/md";
 import { LuListTodo } from "react-icons/lu";
+import { GiHamburgerMenu } from "react-icons/gi";
 import { v4 as uuidv4 } from "uuid";
 import toast, { Toaster } from 'react-hot-toast';
+import { addTodo,search } from "../../Utils/DB_Init";
 
 import Input from "../../Components/Input/Input";
 import Card from "../../Components/Card/Card";
@@ -30,31 +33,6 @@ const style = {
   borderRadius: "6px",
 };
 
-function addHours(date, hours) {
-  date.setHours(date.getHours() + hours);
-
-  return date;
-}
-
-function organizeTodos(arr){
-  let temp = arr.sort((a,b)=> new Date(a.dateTime) - new Date(b.dateTime));
-  let indexArr = [];
-  let resultArr = [];
-  // console.log("arr",arr)
-  for(let i=0;i<temp.length;i++){
-    if(!arr[i].completed){
-      resultArr.push(arr[i]);
-    }else{
-      indexArr.push(i);
-    }
-  }
-  for(let i=0;i<indexArr.length;i++){
-    resultArr.push(arr[indexArr[i]]);
-  }
-  console.log(resultArr);
-  return resultArr;
-}
-
 const notify = (msg) => toast(msg);
 
 const LandingPage = ({ idb }) => {
@@ -62,12 +40,9 @@ const LandingPage = ({ idb }) => {
     "loggedInUser",
   ]);
 
+
   const [todos, setTodos] = useState([]);
   const changeTodos = (data) => {
-    // const todoSorted = data.sort((a,b)=> new Date(a.dateTime) - new Date(b.dateTime));
-    // const todoOrganized = organizeTodos(todoSorted);
-    // const todoOrganized = organizeTodos(data);
-    // setTodos(todoOrganized);
     setTodos(data);
   };
 
@@ -99,16 +74,6 @@ const LandingPage = ({ idb }) => {
       }
     }, 1000));
   };
-
-  // const changeSearchKeyword = (e) => {
-  //   setSearchKeyword(e.target.value);
-  //   handleSearch(e.target.value,searchDate);
-  // };
-
-  // const changeSearchDate = (e) => {
-  //   setSearchDate(e.target.value);
-  //   handleSearch(searchKeyword,e.target.value);
-  // };
   
   useEffect(() => {
     // fetch("https://dummyjson.com/todos")
@@ -127,8 +92,6 @@ const LandingPage = ({ idb }) => {
     
 
   }, [cookies.loggedInUser.todos]);
-
-  
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -161,98 +124,54 @@ const LandingPage = ({ idb }) => {
   const changeDescriptionError = (value) => setDescriptionError(value);
   const changeDateTimeError = (value) => setDateTimeError(value);
 
-  const handleAddTodo = (e) => {
-    if(!title || !description || !dateTime) return;
+  const handleAddTodo = e=> addTodo(e,title,description,dateTime,cookies,setCookie,changeTodos,handleClose,notify);
 
-    const request = idb.open("test-db", 1);
+  const handleSearch = (keyword,date) => search(keyword,date,cookies,changeTodos);
 
-    request.onerror = function (event) {
-      console.error("An error occurred with IndexedDB");
-      console.error(event);
-    };
-    request.onsuccess = function () {
-      console.log("Database opened successfully");
-
-      const db = request.result;
-
-      var tx = db.transaction("userData", "readwrite");
-      var userData = tx.objectStore("userData");
-
-      //add todo
-      const v4Id = uuidv4();
-      const todo = {
-        id: v4Id,
-        title,
-        description,
-        dateTime,
-        completed: false,
-      };
-      const updatedUser = cookies.loggedInUser;
-      updatedUser.todos.push(todo);
-
-      // console.log("updatedUser", updatedUser);
-      // console.log(cookies.loggedInUser.email);
-
-      // const user = userData.put(cookies.loggedInUser.email);
-      const user = userData.put(updatedUser);
-      user.onsuccess = (query) => {
-        console.log("Todo added");
-        const date = new Date();
-
-        const newDate = addHours(date, 1);
-        // console.log("before: ", cookies.loggedInUser);
-        setCookie("loggedInUser", updatedUser, {
-          expires: newDate,
-        });
-        changeTodos(updatedUser.todos);
-        // console.log("after: ", cookies.loggedInUser);
-      };
-      user.onerror = (query) => {
-        console.log("Todo adding failed");
-      };
-
-      tx.oncomplete = function () {
-        // console.log("User found");
-        handleClose();
-        notify("Todo added successfully ✅");
-        db.close();
-      };
-    };
-
-    e.preventDefault();
-  };
-
-  
-
-  
-  const handleSearch = (keyword,date) => {
-    console.log("keyword",keyword);
-    console.log("date",date);
-    if (keyword !== "" && date !== "") {
-      const currentUserTodos = cookies.loggedInUser.todos;
-      const searchQuery = new RegExp(keyword,"i");
-      const searchResults  = currentUserTodos.filter((todo) => (!(todo.title.search(searchQuery)) 
-      || !(todo.description.search(searchQuery))) && (todo.dateTime.slice(0,10) == date))
-      changeTodos(searchResults);
-    }else if(keyword !== ""){
-      const currentUserTodos = cookies.loggedInUser.todos;
-      const searchQuery = new RegExp(keyword,"i");
-      const searchResults  = currentUserTodos.filter((todo) => !(todo.title.search(searchQuery)) 
-      || !(todo.description.search(searchQuery)))
-      changeTodos(searchResults);
-    }else if(date !== ""){
-      const currentUserTodos = cookies.loggedInUser.todos;
-      const searchResults  = currentUserTodos.filter((todo) => (todo.dateTime.slice(0,10) == date))
-      changeTodos(searchResults);
-    }else{
-      changeTodos(cookies.loggedInUser.todos);
-    }
-    // notify("Search Complete ✅");
+  const [sideBar,setSideBar] = useState(false);
+  const handleSideBar = () => {
+    setSideBar(!sideBar);
   };
 
   return (
     <div>
       <Toaster />
+
+        <div className="sideBar">
+          <p className="title"> <span className="titleIcon"><LuListTodo /></span> Todo App</p>
+          <span className="open-sideBar" onClick={handleSideBar}> {sideBar?<MdOutlineClose /> : <GiHamburgerMenu />}  </span>
+      {sideBar && (
+          <section className="header">
+
+        <div className="searchBar">
+          <Input
+            type="search"
+            icon="MdOutlineSearch"
+            placeholder="Search"
+            name="search"
+            id="search"
+            searchKeyword={searchKeyword}
+            changeSearchKeyword={changeSearchKeyword}
+            searchDate={searchDate}
+            changeSearchDate={changeSearchDate}
+          />
+        </div>
+          <div className="todoButtons">
+            <button className="searchTodoButton addTodoButton">
+              Search Todo
+            </button>
+            <button className="addTodoButton" onClick={handleOpen}>
+              Add Todo
+            </button>
+              <a href="/logout">
+                <button className="logoutButton addTodoButton">Logout</button>
+              </a>
+          </div>
+
+      </section>
+)}
+        </div>
+
       {/* Add todo Modal  */}
       <Modal
         aria-labelledby="transition-modal-title"
@@ -320,7 +239,7 @@ const LandingPage = ({ idb }) => {
         </Fade>
       </Modal>
       {/* <p>hello {loggedInUser.email}</p> */}
-      <section className="header">
+      <section className="header navbar">
         <p className="title"> <span className="titleIcon"><LuListTodo /></span> Todo App</p>
         <div className="searchBar">
           <Input

@@ -113,3 +113,57 @@
   font-size: 1.2em;
 }
 
+
+.close-sideBar{
+  font-size: 2em;
+  position: absolute;
+  right: 0.5em;
+  top: 0.25em;
+
+}
+
+.open-sideBar{
+  position: absolute;
+  margin: 0.8em 0 0 0.9em;
+  color: #fff;
+  font-size: 1.3em;
+  z-index: 999;
+  top: 0;
+}
+.navbar{
+  display: flex;
+}
+.sideBar{
+  display: none;
+}
+
+@media screen and (max-width: 946px) {
+  .header{
+    flex-direction: column;
+    position: fixed;
+    height: 100%;
+    z-index: 99;
+    transition: 0.4s;
+    /* margin-top: 4em; */
+
+    
+  }
+  .sideBar{
+    display: block;
+  }
+  .navbar{
+    display: none;
+  }
+  .logoutButton {
+    width: -webkit-fill-available;
+  }
+  .title{
+    background-image: linear-gradient(rgba(112.520718,44.062154,249.437846, 1), rgba(112.520718,44.062154,249.437846, 0.95));
+    color: #fff;
+    display: block;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 99;
+  }
+}

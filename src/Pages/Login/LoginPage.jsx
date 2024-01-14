@@ -1,113 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import toast, { Toaster } from "react-hot-toast";
+import {login} from '../../Utils/DB_Init'
 
 import "./LoginPage.css";
 import Input from "../../Components/Input/Input";
 
-function addHours(date, hours) {
-  date.setHours(date.getHours() + hours);
-
-  return date;
-}
 
 const notify = (msg) => toast(msg);
 
 const LoginPage = ({ idb, userData }) => {
-  const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);
-  // const loggedInUser = cookies.loggedInUser;
-  // if (loggedInUser) {
-  //   window.location.replace("/landingPage");
-  // }
-
-  // console.log(document.referrer);
-  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-  let passwordRegex =
-    /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
+  const [cookies, setCookie] = useCookies(["loggedInUser"]);
 
   const [email, setEmail] = useState("");
   const changeEmail = (e) => {
     setEmail(e.target.value);
-    // console.log(e.target.value);
-    if (!emailRegex.test(e.target.value) && e.target.value !== "") {
-      changeEmailError(true);
-    } else {
-      changeEmailError(false);
-    }
-  };
-  const [emailError, setEmailError] = useState(false);
-  const changeEmailError = (value) => {
-    setEmailError(value);
   };
 
   const [password, setPassword] = useState("");
   const changePassword = (e) => {
     setPassword(e.target.value);
-    // console.log(e.target.value);
-    if (!passwordRegex.test(e.target.value) && e.target.value !== "") {
-      changePasswordError(true);
-    } else {
-      changePasswordError(false);
-    }
-  };
-  const [passwordError, setPasswordError] = useState(false);
-  const changePasswordError = (value) => {
-    setPasswordError(value);
   };
 
-  const [submitError, setSubmitError] = useState(false);
-  const changeSubmitError = (value) => {
-    setSubmitError(value);
-  };
-
-  const handleLogin = (e) => {
-    const request = idb.open("test-db", 1);
-
-    request.onerror = function (event) {
-      console.error("An error occurred with IndexedDB");
-      console.error(event);
-    };
-    request.onsuccess = function () {
-      console.log("Database opened successfully");
-
-      const db = request.result;
-
-      var tx = db.transaction("userData", "readonly");
-      var userData = tx.objectStore("userData");
-
-      const user = userData.get(email);
-      user.onsuccess = (query) => {
-        const user1 = query.srcElement.result;
-        console.log("User found", user1);
-        if (!user1) {
-          notify("No such user❗");
-        } else {
-          if (user1.password === password) {
-            console.log("password matched, log in user");
-            //set cookie
-            const date = new Date();
-            const newDate = addHours(date, 2);
-            user1.loginTime = new Date();
-            setCookie("loggedInUser", user1, {
-              expires: newDate,
-            });
-            // window.location.replace("/landingPage");
-          } else {
-            notify("Incorrect Password❗");
-          }
-        }
-      };
-      user.onerror = (query) => {
-        console.log("User not found");
-      };
-
-      tx.oncomplete = function () {
-        // console.log("User found");
-        db.close();
-      };
-    };
-    e.preventDefault();
-  };
+ 
 
   const checkLogout = ()=>{
 if(document.referrer === "http://localhost:3000/logout"){
@@ -118,6 +33,8 @@ if(document.referrer === "http://localhost:3000/logout"){
   useEffect(() => {
     checkLogout();
   }, []);
+
+  const handleLogin = e => login(e,email,password,setCookie,notify);
 
   return (
     <div>
@@ -131,8 +48,8 @@ if(document.referrer === "http://localhost:3000/logout"){
               name="email"
               id="email"
               placeholder="Email"
-              error={emailError}
-              errorMessage="Kindly enter appropriate email!"
+              // error={emailError}
+              // errorMessage="Kindly enter appropriate email!"
               data={email}
               changeData={changeEmail}
               icon="MdAlternateEmail"
@@ -142,8 +59,8 @@ if(document.referrer === "http://localhost:3000/logout"){
               name="password"
               id="password"
               placeholder="Password"
-              error={passwordError}
-              errorMessage="Kindly follow the password policy!"
+              // error={passwordError}
+              // errorMessage="Kindly follow the password policy!"
               data={password}
               changeData={changePassword}
               icon="MdLock"

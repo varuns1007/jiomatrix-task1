@@ -84,7 +84,7 @@ const Input = ({
           onChange={(e) => changeData(e)}
         ></textarea>
       ) : type === "search" ? (
-        <div className="position:relative">
+        <div className="searchField">
           <input
             className="input-body"
             type={type}

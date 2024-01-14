@@ -1,74 +1,23 @@
 import { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { CookiesProvider, useCookies } from "react-cookie";
-
+import {checkIndexedDb,getAllData,idb} from './Utils/DB_Init'
 import Routes from "./Routes";
 
-const idb =
-  window.indexedDB ||
-  window.mozIndexedDB ||
-  window.webkitIndexedDB ||
-  window.msIndexedDB ||
-  window.shimIndexedDB;
 
-const checkIndexedDb = () => {
-  //check for support
-  if (!idb) {
-    console.log("This browser doesn't support IndexedDB");
-    return;
-  }
-
-  const request = idb.open("test-db", 1);
-
-  request.onerror = function (event) {
-    console.error("An error occurred with IndexedDB");
-    console.error(event);
-  };
-
-  request.onupgradeneeded = function (event) {
-    console.log(event);
-    const db = request.result;
-
-    if (!db.objectStoreNames.contains("userData")) {
-      const objectStore = db.createObjectStore("userData", {
-        keyPath: "email",
-      });
-    }
-  };
-
-  request.onsuccess = function () {
-    console.log("Database opened successfully");
-  };
-};
 
 function App() {
   const [allUsers, setAllUsers] = useState([]);
-  const [cookies, setCookie, removeCookie] = useCookies(["loggedInUser"]);
+  const [cookies] = useCookies(["loggedInUser"]);
   const loggedInUser = cookies.loggedInUser;
 
   useEffect(() => {
     checkIndexedDb();
-    getAllData();
+    const data = getAllData();
+    setAllUsers(data);
   }, []);
 
-  const getAllData = () => {
-    const dbPromise = idb.open("test-db", 1);
-    dbPromise.onsuccess = () => {
-      const db = dbPromise.result;
-
-      var tx = db.transaction("userData", "readonly");
-      var userData = tx.objectStore("userData");
-      const users = userData.getAll();
-
-      users.onsuccess = (query) => {
-        setAllUsers(query.srcElement.result);
-      };
-
-      tx.oncomplete = function () {
-        db.close();
-      };
-    };
-  };
+  
 
   // const router = createBrowserRouter([
   //   {

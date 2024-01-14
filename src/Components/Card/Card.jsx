@@ -8,18 +8,10 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import { IoIosCloseCircle } from "react-icons/io";
 import toast, { Toaster } from 'react-hot-toast';
-
+import { markTodoComplete,editTodo, deleteTodo } from "../../Utils/DB_Init";
 
 import Input from "../../Components/Input/Input";
-
 import "./Card.css";
-
-
-function addHours(date, hours) {
-  date.setHours(date.getHours() + hours);
-
-  return date;
-}
 
 const notify = (msg) => toast(msg);
 
@@ -82,173 +74,11 @@ const Card = ({ data, idb,todoStateHandler }) => {
   };
 
 
-  const handleTodoComplete = () => {
-    const request = idb.open("test-db", 1);
+  const handleTodoComplete = () => markTodoComplete(notify,cookies,data,setCookie);
 
-    request.onerror = function (event) {
-      console.error("An error occurred with IndexedDB");
-      notify("An error occurred with IndexedDB ❗");
-      
-      // console.error(event);
-    };
-    request.onsuccess = function () {
-      console.log("Database opened successfully");
+  const handleEditTodo = () => editTodo(notify,cookies,data,title,todoComplete,description,dateTime,setCookie);
 
-      const db = request.result;
-
-      var tx = db.transaction("userData", "readwrite");
-      var userData = tx.objectStore("userData");
-
-      const currentUser = cookies.loggedInUser;
-      let currentTodo = false;
-
-      // console.log("before", currentUser.todos[0]);
-      currentUser.todos.forEach((todo) => {
-        // console.log(todo.id === data.id);
-        if (todo.id === data.id) {
-          todo.completed = !todo.completed;
-          currentTodo = todo.completed;
-          return;
-        }
-      });
-      // console.log("after", currentUser.todos[0]);
-
-      const user = userData.put(currentUser);
-      user.onsuccess = (query) => {
-        console.log("Todo completed");
-        const date = new Date();
-
-        const newDate = addHours(date, 1);
-        // console.log("before: ", cookies.loggedInUser);
-        setCookie("loggedInUser", currentUser, {
-          expires: newDate,
-        });
-        // console.log("after: ", cookies.loggedInUser);
-      };
-      user.onerror = (query) => {
-        console.log("Todo completed update failed");
-      notify("Todo completed update failed❗");
-
-      };
-
-      tx.oncomplete = function () {
-        // console.log("User found");
-        currentTodo ? notify("Todo completed ✅") : notify("Todo pending ❗");
-        db.close();
-      };
-    };
-  };
-
-  const handleEditTodo = () => {
-    const request = idb.open("test-db", 1);
-
-    request.onerror = function (event) {
-      console.error("An error occurred with IndexedDB");
-      notify("An error occurred with IndexedDB ❗");
-      // console.error(event);
-    };
-    request.onsuccess = function () {
-      console.log("Database opened successfully");
-
-      const db = request.result;
-
-      var tx = db.transaction("userData", "readwrite");
-      var userData = tx.objectStore("userData");
-
-      const currentUser = cookies.loggedInUser;
-
-      // console.log("before", currentUser.todos[0]);
-      currentUser.todos.forEach((todo) => {
-        // console.log(todo.id === data.id);
-        if (todo.id === data.id) {
-          todo.title = title;
-          todo.completed = todoComplete;
-          todo.description = description;
-          todo.dateTime = dateTime;
-          return;
-        }
-      });
-      // console.log("after", currentUser.todos[0]);
-
-      const user = userData.put(currentUser);
-      user.onsuccess = (query) => {
-        console.log("Todo edited");
-        const date = new Date();
-
-        const newDate = addHours(date, 1);
-        // console.log("before: ", cookies.loggedInUser);
-        setCookie("loggedInUser", currentUser, {
-          expires: newDate,
-        });
-        // console.log("after: ", cookies.loggedInUser);
-      };
-      user.onerror = (query) => {
-        console.log("Todo update failed");
-        notify("Todo update failed ❗");
-
-      };
-
-      tx.oncomplete = function () {
-        // console.log("User found");
-        notify("Todo edited successfully ✅");
-        db.close();
-      };
-    };
-  };
-
-  const handleDeleteTodo = (e) => {
-    const request = idb.open("test-db", 1);
-
-    request.onerror = function (event) {
-      console.error("An error occurred with IndexedDB");
-      console.error(event);
-      notify("An error occurred with IndexedDB ❗");
-    };
-    request.onsuccess = function () {
-      console.log("Database opened successfully");
-
-      const db = request.result;
-
-      var tx = db.transaction("userData", "readwrite");
-      var userData = tx.objectStore("userData");
-
-      //add todo
-      const updatedUser = cookies.loggedInUser;
-      updatedUser.todos.forEach((todo,i)=>{
-        if(todo.id === data.id){
-          updatedUser.todos.splice(i,1);
-          return;
-        }
-      });
-
-      const user = userData.put(updatedUser);
-      user.onsuccess = () => {
-        console.log("Todo deleted");
-        const date = new Date();
-
-        const newDate = addHours(date, 1);
-        // console.log("before: ", cookies.loggedInUser);
-        setCookie("loggedInUser", updatedUser, {
-          expires: newDate,
-        });
-
-        todoStateHandler(updatedUser.todos);
-        // console.log("after: ", cookies.loggedInUser);
-      };
-      user.onerror = () => {
-        console.log("Todo adding failed");
-        notify("Todo adding failed ❗");
-      };
-
-      tx.oncomplete = function () {
-        // console.log("User found");
-        notify("Todo deleted successfully ✅");
-        db.close();
-      };
-    };
-
-    e.preventDefault();
-  };
+  const handleDeleteTodo = e => deleteTodo(e,notify,cookies,data,setCookie,todoStateHandler);
 
 
   return (
